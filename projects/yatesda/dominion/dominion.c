@@ -7,11 +7,12 @@
 #include <stdlib.h>
 
 
-int Adventurer(int handPos, int choice1, int choice2, int choice3, struct gameState *state);
+/*int Adventurer(int handPos, int choice1, int choice2, int choice3, struct gameState *state);
 int CouncilRoom(int handPos, int choice1, int choice2, int choice3, struct gameState *state);
 int Feast(int handPos, int choice1, int choice2, int choice3, struct gameState *state);
 int Mine(int handPos, int choice1, int choice2, int choice3, struct gameState *state);
 int Smithy(int handPos, int choice1, int choice2, int choice3, struct gameState *state);
+*/
 
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
