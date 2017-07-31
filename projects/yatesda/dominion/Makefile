@@ -42,15 +42,31 @@ testKingdomCards: unittest3.c dominion.o rngs.o
 testSupplyCount: unittest4.c dominion.o rngs.o
 	gcc -o unittest4 -g unittest4.c dominion.o rngs.o $(CFLAGS)
 
+randomAdv: randomtestadventurer.c dominion.o rngs.o
+	gcc -o randomtestadventurer.out -g randomtestadventurer.c dominion.o rngs.o $(CFLAGS)
+
+randomSmithy:  randomtestcard1.c dominion.o rngs.o
+	gcc -o randomtestcard1.out -g randomtestcard1.c dominion.o rngs.o $(CFLAGS)
+
+randomCouncil:  randomtestcard2.c dominion.o rngs.o
+	gcc -o randomtestcard2.out -g randomtestcard2.c dominion.o rngs.o $(CFLAGS)
+
 testAll: dominion.o testSuite.c
 	gcc -o testSuite testSuite.c -g  dominion.o rngs.o $(CFLAGS)
 
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
-runtests: testDrawCard 
+randomTests: randomAdv randomSmithy randomCouncil
+	./randomtestadventurer.out &> randomtestresults.out
+	./randomtestcard1.out >> randomtestresults.out
+	./randomtestcard2.out >> randomtestresults.out
+	gcov -b -c dominion.c &> randomtestcoverage.out
+	cat dominion.c.gcov >> randomtestcoverage.out
+
+runUnitTests: testDrawCard 
 	./testDrawCard &> unittestresult.out
-	gcov dominion.c >> unittestresult.out
+	gcov -b -c dominion.c >> unittestresult.out
 	cat dominion.c.gcov >> unittestresult.out
 
 
@@ -60,7 +76,7 @@ player: player.c interface.o
 all: playdom player testDrawCard testBuyCard badTestDrawCard unit
 
 clean:
-	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe randomtestadventurer.out randomtestcard1.out randomtestcard2.out
 
 unit: testDraw testNumHandCards testKingdomCards testSupplyCount testAdv testSmithy testMine testFeast
 
