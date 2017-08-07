@@ -1,0 +1,99 @@
+Bug-Reports 
+
+Bug #1: 
+
+//Altered Village card void alteredVillage(struct 
+gameState *state, int handPos){
+        int currentPlayer = whoseTurn(state);
+          //+1 Card
+          drawCard(currentPlayer, state);
+          //+2 Actions
+          state->numActions = 2;
+          //discard
+          discardCard(handPos, currentPlayer, state, 0);
+          return;
+}
+
+Summary: Village card code sets the numActions variable for the current 
+game state to 2, instead of incrementing the numActions variable by 2. 
+The bug was uncovered by running cardtest3.c which tests the village 
+card function (alteredVillage) by completing the following steps; 
+
+
+-Initialize the game to 2 players, return the game state. 
+-Pass game 
+state to the checkVillage function along with the handPos of the current 
+card (arbitrary) 
+-checkVillage function copies the current game state to 
+track changes versus expected changes from the card action being tested 
+(initial & test states) 
+-Pass the testGame state to the alteredVillage 
+function 
+-Perform the expected actions on the initial game state (+1 
+card, +2 actions, discard 1) versus the results from passing the test 
+state to alteredVillage 
+-Compare hand count, deck count, and discard 
+count for the current player between the initial game state versus the 
+test game state, as well as testing the numActions variable for the 
+initial and testGame states. 
+-Should any of the tests fail, a string will print to stdout indicating 
+the test that failed, otherwise, a passed test string will return to 
+stdout for each test. 
+
+The actions test is what alerted me to the bug. The actions test failed, 
+indicating that 2 actions weren’t properly being added to the current numActions 
+variable for the game state.  Upon closer inspection, I was able to 
+immediately identify the issue, which is that the line (shown above - 
+"state->numActions = 2;") in the alteredVillage code that altered the 
+numActions variable actually set that variable to 2, instead of adding 2 
+to the current level.
+
+
+Bug #2: 
+
+//Altered smithy void alteredSmithy(struct 
+
+gameState *state, int handPos){
+        int currentPlayer = whoseTurn(state);
+        int i;
+              //+3 Cards
+    for (i = 1; i < 3; i++)
+        {
+          drawCard(currentPlayer, state);
+        }
+      //discard card from hand
+      discardCard(handPos, currentPlayer, state, 0);
+      return;
+}
+
+Summary: The Smithy card code is intended to have the current player 
+(player who plays Smithy) draw 3 cards and discard the card being 
+played. The bug was uncovered by running cardtest1.c which tests the 
+smithy card function (alteredSmithy) completing the following steps; 
+
+-Initialize the game to 2 players, return the game state. 
+-Pass game state to the checkVillage function along with the handPos 
+of the current card (arbitrary) 
+-checkSmithy function copies the current game state to 
+track changes versus expected changes from the card action being tested 
+(initial & test states) 
+-Pass the testGame state to the alteredSmithy function 
+-Calculate the expected actions on the initial game state (+3 
+cards, discard 1) versus the results from passing the test state to 
+alteredSmithy 
+-Compare hand count and deck count for the current player 
+between the initial game state versus the test game state. 
+-Should any of the tests fail, a string will print to stdout indicating the test 
+that failed, otherwise, a passed test string will return to stdout for 
+each test.
+
+The alteredSmithy code contained a subtle bug in the for loop that was 
+intended to draw 3 cards for the current player. The for loop (in the 
+code above, the for loop began at i = 1 and continued while i was less 
+than 3, which caused the loop to repeat only twice, instead of the intended 
+3 times. Had the loop started at i =0 or terminated at i <= 3 or i < 4, 
+then the intended actions would have taken place. Both the hand count and 
+deck count tests failed, indicating that there was an issue with the number 
+of cards drawn. The test indicated the number of cards drawn as the issue because 
+the test printed the expected state (7 Handcount, 2 deckCount) versus final 
+state (6 Handcount, 3 deckcount). 
